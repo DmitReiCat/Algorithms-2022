@@ -159,27 +159,6 @@ fun Graph.longestSimplePath(): Path {
         neighbours.forEach { if (it !in currentPath) pathsToCheck.push(Path(currentPath, this, it)) }
     }
     return res
-
-
-    //Производительность O(W*E)
-    //Ресурсоемкость O(W)
-    //W (ways) - количество путей; E - количетсво рёбер каждой вершины
-//    var result = Path()
-//    val possiblePaths = ArrayDeque<Path>()
-//    vertices.forEach { possiblePaths.addLast(Path(it)) }
-//    while (possiblePaths.isNotEmpty()) {
-//        val currentPath = possiblePaths.removeLast()
-//        if (result.length < currentPath.length) {
-//            result = currentPath
-//        }
-//        val neighbours = getNeighbors(currentPath.vertices[currentPath.length])
-//        neighbours.forEach {
-//            if (it !in currentPath) {
-//                possiblePaths.addLast(Path(currentPath, this, it))
-//            }
-//        }
-//    }
-
 }
 
 /**
