@@ -63,6 +63,82 @@ class KtTrie : AbstractMutableSet<String>(), MutableSet<String> {
         return false
     }
 
+
+    /**
+     * для оценок трудоемкости и ресурсоемкости: h = высота дерева
+     */
+    inner class TrieIterator internal constructor() : MutableIterator<String> {
+        private val charStack = Stack<Char>()
+        private val forkStack = Stack<MutableIterator<MutableMap.MutableEntry<Char, Node>>>()
+        private var currentString: String = ""
+        private var currentIter: MutableIterator<MutableMap.MutableEntry<Char, Node>>? = null
+        private val savedSize = size
+        var foundStr = 0
+
+
+        private fun findNextString(stop: Boolean) {
+            if (!stop) {
+                if (forkStack.lastElement().hasNext()) {
+                    val entry = forkStack.lastElement().next()
+                    charStack.push(entry.key)
+                    currentIter = forkStack.lastElement()
+                    val currentIterator = entry.value.children.iterator()
+                    forkStack.push(currentIterator)
+                    findNextString(entry.key == 0.toChar())
+                } else {
+                    if (charStack.isNotEmpty()) {
+                        forkStack.pop()
+                        charStack.pop()
+                    }
+                    findNextString(charStack.isEmpty() && !forkStack[0].hasNext())
+                }
+            } else {
+                if (charStack.isNotEmpty()) {
+                    charStack.pop()
+                    forkStack.pop()
+                }
+                currentString = charStack.joinToString("")
+            }
+        }
+
+        init {
+            if (root.children.isNotEmpty()) {
+                forkStack.push(root.children.iterator())
+            }
+        }
+
+
+        /**
+         * R = O(h) (для работы функции необходим стэк)
+         * T = O(1)
+         */
+        override fun hasNext(): Boolean = foundStr != savedSize && savedSize != 0
+
+        /**
+         * R = O(h) (для работы функции необходим стэк)
+         * T = O(h)
+         */
+        override fun next(): String {
+            if (hasNext()) {
+                findNextString(false)
+                foundStr++
+                return currentString
+            } else throw NoSuchElementException()
+        }
+
+        /**
+         * R = O(h) (для работы функции необходим стэк)
+         * T = O(1)
+         */
+        override fun remove() {
+            currentIter?.apply {
+                remove()
+                size--
+                currentIter = null
+            } ?: throw IllegalStateException()
+        }
+    }
+
     /**
      * Итератор для префиксного дерева
      *
@@ -70,8 +146,5 @@ class KtTrie : AbstractMutableSet<String>(), MutableSet<String> {
      *
      * Сложная
      */
-    override fun iterator(): MutableIterator<String> {
-        TODO()
-    }
-
+    override fun iterator() = TrieIterator()
 }
