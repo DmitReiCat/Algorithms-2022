@@ -199,7 +199,7 @@ abstract class AbstractGraphTests {
             addVertex("1")
         }.build()
         val resTree2 = builtGraph2.minimumSpanningTree()
-        assertEquals(1, resTree2.edges.size)
+        assertEquals(0, resTree2.edges.size)
 
     }
 
