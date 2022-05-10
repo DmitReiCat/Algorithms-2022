@@ -2,6 +2,10 @@
 
 package lesson6
 
+import lesson6.Graph.Vertex
+import lesson6.impl.GraphBuilder
+import java.util.*
+
 /**
  * Эйлеров цикл.
  * Средняя
@@ -59,10 +63,36 @@ fun Graph.findEulerLoop(): List<Graph.Edge> {
  * E    F    I
  * |
  * J ------------ K
+ *
+ * v = количество ребер каждой вершины
+ * e = количесво вершин
+ *
+ * R = O(e * v)
+ * T = O(e)
  */
 fun Graph.minimumSpanningTree(): Graph {
-    TODO()
+    val res = GraphBuilder()
+
+    val visitedVertices = mutableSetOf<Vertex>()
+    visitedVertices.add(vertices.firstOrNull() ?: return res.build())
+
+    vertices.forEach { currentVertex ->
+        getNeighbors(currentVertex).forEach { vertex ->
+            if (vertex !in visitedVertices) {
+                res.apply {
+                    addVertex(currentVertex.name)
+                    addVertex(vertex.name)
+                    addConnection(currentVertex, vertex)
+                }
+                visitedVertices.add(vertex)
+            }
+        }
+    }
+    return res.build()
 }
+
+
+
 
 /**
  * Максимальное независимое множество вершин в графе без циклов.
@@ -111,9 +141,45 @@ fun Graph.largestIndependentVertexSet(): Set<Graph.Vertex> {
  * J ------------ K
  *
  * Ответ: A, E, J, K, D, C, H, G, B, F, I
+ *
+ * Поскольку просчтитываются все возможные перестановки путей к вершинам
+ * R = O(n!)
+ * T = O(n!)
  */
 fun Graph.longestSimplePath(): Path {
-    TODO()
+    var res = Path()
+    val pathsToCheck = Stack<Path>()
+    val vertices: Set<Vertex> = vertices
+    vertices.forEach { pathsToCheck.push(Path(it)) }
+
+    while (pathsToCheck.isNotEmpty()) {
+        val currentPath = pathsToCheck.pop()
+        if (currentPath > res) res = currentPath
+        val neighbours = getNeighbors(currentPath.vertices[currentPath.length])
+        neighbours.forEach { if (it !in currentPath) pathsToCheck.push(Path(currentPath, this, it)) }
+    }
+    return res
+
+
+    //Производительность O(W*E)
+    //Ресурсоемкость O(W)
+    //W (ways) - количество путей; E - количетсво рёбер каждой вершины
+//    var result = Path()
+//    val possiblePaths = ArrayDeque<Path>()
+//    vertices.forEach { possiblePaths.addLast(Path(it)) }
+//    while (possiblePaths.isNotEmpty()) {
+//        val currentPath = possiblePaths.removeLast()
+//        if (result.length < currentPath.length) {
+//            result = currentPath
+//        }
+//        val neighbours = getNeighbors(currentPath.vertices[currentPath.length])
+//        neighbours.forEach {
+//            if (it !in currentPath) {
+//                possiblePaths.addLast(Path(currentPath, this, it))
+//            }
+//        }
+//    }
+
 }
 
 /**

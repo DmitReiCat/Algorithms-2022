@@ -109,13 +109,13 @@ class KtTrie : AbstractMutableSet<String>(), MutableSet<String> {
 
 
         /**
-         * R = O(h) (для работы функции необходим стэк)
+         * R = O(h * ресурсоемкость итераторов для каждого нода в стеке) (для работы функции необходим стэк)
          * T = O(1)
          */
         override fun hasNext(): Boolean = foundStr != savedSize && savedSize != 0
 
         /**
-         * R = O(h) (для работы функции необходим стэк)
+         * R = O(h * ресурсоемкость итераторов для каждого нода в стеке) (для работы функции необходим стэк)
          * T = O(h)
          */
         override fun next(): String {
@@ -127,7 +127,7 @@ class KtTrie : AbstractMutableSet<String>(), MutableSet<String> {
         }
 
         /**
-         * R = O(h) (для работы функции необходим стэк)
+         * R = O(h * ресурсоемкость итераторов для каждого нода в стеке) (для работы функции необходим стэк)
          * T = O(1)
          */
         override fun remove() {
